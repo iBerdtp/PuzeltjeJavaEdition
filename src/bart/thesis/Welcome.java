@@ -4,7 +4,7 @@ public class Welcome extends TextSection
 {
 	public Welcome()
 	{
-		super(null, "New Game (1) or Load (2)?");
+		super(null, "New Game (1), Load (2), or Exhaust(3)?");
 	}
 	
 	public void performWhenDone()
