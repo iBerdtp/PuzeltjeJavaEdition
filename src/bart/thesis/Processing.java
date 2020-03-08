@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.Comparator;
 import processing.core.PApplet;
-import processing.core.PVector;
 
 public class Processing extends PApplet
 {
@@ -73,7 +72,7 @@ public class Processing extends PApplet
 	
 	public void savePuzzle(Board initial, GameType gameType)
 	{
-		File dir = new File(SAVES_PATH+gameType+"\\"+initial.getDifficulty());
+		File dir = new File(SAVES_DIR,gameType+"\\"+initial.getDifficulty());
 		String fileName = dir.getPath()+"\\";
 		if(dir.isDirectory() && dir.list().length>0)
 		{
@@ -83,13 +82,13 @@ public class Processing extends PApplet
 		else
 			fileName += 0;
 		fileName += ".puz";
-		PVector[] goals = initial.getGoals();
+		Vector[] goals = initial.getGoals();
 		PrintWriter output = createWriter(fileName);
 		
 		output.println(initial.getArrayDim());
 		output.println(initial);
 		output.println(goals.length);
-		for(PVector v : goals)
+		for(Vector v : goals)
 			output.println((int)v.x+" "+(int)v.y);
 		output.close();
 		

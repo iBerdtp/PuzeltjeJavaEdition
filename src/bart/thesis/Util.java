@@ -3,13 +3,12 @@ package bart.thesis;
 import java.util.ArrayList;
 import java.util.Random;
 import processing.core.PConstants;
-import processing.core.PVector;
 
 public class Util
 {
 	private final static Random random = new Random();
 	
-	public static PVector getRandom(ArrayList<PVector> vectors)
+	public static Vector getRandom(ArrayList<Vector> vectors)
 	{
 		return vectors.remove(random.nextInt(vectors.size()));
 	}
@@ -66,7 +65,7 @@ public class Util
 			for(int j = 0; j<arrayDim; j++)
 			{
 				Main.PROCESSING.fill(0);
-				for(PVector goal : current.goals)
+				for(Vector goal : current.getGoals())
 					if(goal.x==i && goal.y==j)
 						Main.PROCESSING.fill(255, 0, 0);
 				Main.PROCESSING.stroke(Processing.TEXT_BACKGROUND);
@@ -90,7 +89,7 @@ public class Util
 				if(current.get(i, j)!=-1)
 				{
 					Main.PROCESSING.fill(0);
-					for(PVector goal : current.goals)
+					for(Vector goal : current.getGoals())
 						if(goal.x==i && goal.y==j)
 							Main.PROCESSING.fill(255, 0, 0);
 					Main.PROCESSING.stroke(Processing.TEXT_BACKGROUND);

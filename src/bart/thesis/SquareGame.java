@@ -1,7 +1,6 @@
 package bart.thesis;
 
 import java.util.ArrayList;
-import processing.core.PVector;
 
 public class SquareGame extends Game
 {
@@ -36,20 +35,22 @@ public class SquareGame extends Game
 	
 	private void setGoals(Board b, int nrOfGoals)
 	{
-		ArrayList<PVector> possibleGoals = getPossibleSpots(b, 1);
-		b.goals = new PVector[nrOfGoals];
+		ArrayList<Vector> possibleGoals = getPossibleSpots(b, 1);
+		Vector[] goals = new Vector[nrOfGoals];
 		for(int i = 0; i<nrOfGoals; i++)
-			b.goals[i] = Util.getRandom(possibleGoals);
+			goals[i] = Util.getRandom(possibleGoals);
+		b.setGoals(goals);
 	}
 	
 	private void setUnits(Board b, int nrOfGoals, int nrOfPawns)
 	{
-		ArrayList<PVector> spots = getPossibleSpots(b, 0);
+		ArrayList<Vector> spots = getPossibleSpots(b, 0);
+		Vector[] goals = b.getGoals();
 		for(int i = 0; i<nrOfPawns; i++)
 			b.set(Util.getRandom(spots), 2);
 		for(int i = 0; i<spots.size(); i++)
-			for(int j = 0; j<b.goals.length; j++)
-				if(spots.get(i).equals(b.goals[j]))
+			for(int j = 0; j<goals.length; j++)
+				if(spots.get(i).equals(goals[j]))
 				{
 					spots.remove(i--);
 					break;
@@ -58,12 +59,12 @@ public class SquareGame extends Game
 			b.set(Util.getRandom(spots), 1);
 	}
 	
-	private ArrayList<PVector> getPossibleSpots(Board b, int rimSize)
+	private ArrayList<Vector> getPossibleSpots(Board b, int rimSize)
 	{
-		ArrayList<PVector> spots = new ArrayList<PVector>();
+		ArrayList<Vector> spots = new ArrayList<Vector>();
 		for(int y = rimSize; y<b.getArrayDim()-rimSize; y++)
 			for(int x = rimSize; x<b.getArrayDim()-rimSize; x++)
-				spots.add(new PVector(x, y));
+				spots.add(new Vector(x, y));
 		return spots;
 	}
 	

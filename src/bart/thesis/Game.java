@@ -1,8 +1,8 @@
 package bart.thesis;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import processing.core.PConstants;
-import processing.core.PVector;
 import processing.data.IntList;
 
 public abstract class Game extends Section
@@ -14,7 +14,7 @@ public abstract class Game extends Section
 	private int chosenDif;
 	private Board initial;
 	private Board current;
-	protected PVector selected;
+	protected Vector selected;
 	private Move move;
 	private boolean won;
 	private Move[] allowed;
@@ -79,7 +79,7 @@ public abstract class Game extends Section
 				for(int c : moveControls)
 					if(Main.PROCESSING.KEYS[c])
 					{
-						selected = current.move(selected, map.get(c));
+						current.move(selected, map.get(c));
 						break;
 					}
 				
@@ -120,11 +120,11 @@ public abstract class Game extends Section
 		current = initial.copy();
 		won = false;
 		move = null;
-		for(int i = 0; i<current.getArrayDim(); i++)
-			for(int j = 0; j<current.getArrayDim(); j++)
-				if(current.get(i, j)==1)
+		for(int y = 0; y<current.getArrayDim(); y++)
+			for(int x = 0; x<current.getArrayDim(); x++)
+				if(current.get(x, y)==1)
 				{
-					selected = new PVector(i, j);
+					selected = new Vector(x, y);
 					return;
 				}
 	}

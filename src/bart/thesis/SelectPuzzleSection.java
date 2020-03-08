@@ -2,7 +2,6 @@ package bart.thesis;
 
 import java.io.File;
 import processing.core.PConstants;
-import processing.core.PVector;
 
 public class SelectPuzzleSection extends Section
 {
@@ -63,11 +62,11 @@ public class SelectPuzzleSection extends Section
 				intses[x][y] = row[x];
 		}
 		int nrOfGoals = Integer.parseInt(strings[dim+1]);
-		PVector[] goals = new PVector[nrOfGoals];
+		Vector[] goals = new Vector[nrOfGoals];
 		for(int i = 0; i<nrOfGoals; i++)
 		{
 			int[] coordinates = Util.toIntArray(strings[dim+2+i].split(" "));
-			goals[i] = new PVector(coordinates[0], coordinates[1]);
+			goals[i] = new Vector(coordinates[0], coordinates[1]);
 		}
 		return new Board(gameType, dim, goals, intses);
 	}
