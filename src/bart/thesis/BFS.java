@@ -2,7 +2,6 @@ package bart.thesis;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import processing.core.PVector;
 
 public class BFS
 {
@@ -21,18 +20,20 @@ public class BFS
 	
 	public Board solution()
 	{
+		if(frontier.get(0).isWin())
+			return frontier.get(0);
 		while(true)
 		{
 			if(frontier.isEmpty())
 				return null;
 			Board current = frontier.remove(0);
-			for(int i = 0; i<current.getArrayDim(); i++)
-				for(int j = 0; j<current.getArrayDim(); j++)
-					if(current.get(i, j)>0)
+			for(int y = 0; y<current.getArrayDim(); y++)
+				for(int x = 0; x<current.getArrayDim(); x++)
+					if(current.get(x, y)>0)
 						for(Move move : allowed)
 						{
 							Board copy = current.copy();
-							copy.move(new PVector(i, j), move);
+							copy.move(new Vector(x, y), move);
 							int boardPos = Collections.binarySearch(visited, copy.getBoard(), Processing.COMPARATOR);
 							if(boardPos<0)
 							{
