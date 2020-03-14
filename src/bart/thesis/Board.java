@@ -1,18 +1,13 @@
 package bart.thesis;
 
-import processing.core.PVector;
-
 public class Board
 {
-	private GameType gameType;
-	private int arrayDim;
+	protected GameType gameType;
+	protected int arrayDim;
 	private int[][] board;
-	private PVector lastSelected;
-	private Move lastMove;
-	private int depth;
-	public PVector[] goals;
+	public Vector[] goals;
 	private int difficulty;
-	private Board parent;
+	protected int depth;
 	
 	public Board(GameType gameType, int arrayDim)
 	{
@@ -21,21 +16,36 @@ public class Board
 		this.board = new int[arrayDim][arrayDim];
 	}
 	
-	public Board(GameType gameType, int arrayDim, PVector[] goals, PVector[] pawns, PVector[] blues)
+	public Board(GameType gameType, int arrayDim, Vector[] goals, Vector[] pawns, Vector[] blues)
 	{
 		this(gameType, arrayDim);
 		this.goals = goals;
-		for(PVector v : pawns)
+		for(Vector v : pawns)
 			set(v, 2);
-		for(PVector v : blues)
+		for(Vector v : blues)
 			set(v, 1);
 	}
 	
-	public Board(GameType gameType, int arrayDim, PVector goals[], int[][] board)
+	public Board(GameType gameType, int arrayDim, Vector[] goals, int[][] board)
 	{
 		this(gameType, arrayDim);
 		this.goals = goals;
 		this.board = board;
+	}
+	
+	public Board(GameType gameType, int arrayDim, Vector[] goals)
+	{
+		this(gameType, arrayDim, goals, new int[arrayDim][arrayDim]);
+	}
+	
+	protected Board(Board b)
+	{
+		this(b.gameType, b.arrayDim);
+		for(int y = 0; y<arrayDim; y++)
+			for(int x = 0; x<arrayDim; x++)
+				set(x, y, b.get(x, y));
+		setGoals(b.goals);
+		setDepth(b.depth);
 	}
 	
 	public void setDifficulty(int difficulty)
@@ -43,40 +53,34 @@ public class Board
 		this.difficulty = difficulty;
 	}
 	
-	public PVector move(PVector selected, Move move)
+	public boolean move(Vector selected, Move move)
 	{
-		int type = get(selected);
-		if(type>0 && move!=null)
+		if(move!=null && get(selected)>0)
 		{
-			lastSelected = selected.copy();
-			lastMove = move;
-			PVector direction = move.getVector();
-			PVector v = PVector.add(selected, direction);
-			
-			if(boundariesRespected(v) && get(v)==0)
-			{
-				v.add(direction);
-				while(boundariesRespected(v))
-				{
-					if(get(v)>0)
+			int type = get(selected);
+			Vector addee = move.v;
+			Vector scout = selected.copy().add(addee);
+			if(boundariesRespected(scout) && get(scout)==0)
+				while(boundariesRespected(scout.add(addee)))
+					if(get(scout)>0)
 					{
-						v.sub(direction);
-						set(v, type);
-						if(!lastSelected.equals(v))
-							set(lastSelected, 0);
-						setDepth(getDepth()+1);
-						return v;
+						set(selected, 0);
+						set(selected.setTo(scout.sub(addee)), type);
+						depth++;
+						return true;
 					}
-					v.add(direction);
-				}
-			}
 		}
-		return selected;
+		return false;
 	}
 	
-	private boolean boundariesRespected(PVector v)
+	protected boolean boundariesRespected(Vector v)
 	{
-		return v.x>=0 && v.x<arrayDim && v.y>=0 && v.y<arrayDim && get(v)!=-1;
+		return boundariesRespected(v.x, v.y);
+	}
+	
+	protected boolean boundariesRespected(int x, int y)
+	{
+		return x>=0 && x<arrayDim && y>=0 && y<arrayDim && get(x, y)!=-1;
 	}
 	
 	public int get(int x, int y)
@@ -84,23 +88,36 @@ public class Board
 		return board[x][y];
 	}
 	
-	public int get(PVector v)
+	public int get(Vector v)
 	{
-		return get((int)v.x, (int)v.y);
+		return get(v.x, v.y);
 	}
 	
-	public PVector getNext(PVector v)
+	public Vector getNext(Vector v)
 	{
-		int i = (int)v.x+1;
-		for(int j = (int)v.y; j<arrayDim; j++)
+		int x = v.x+1;
+		for(int y = v.y; y<arrayDim; y++)
 		{
-			for(; i<arrayDim; i++)
-				if(get(i, j)>0)
-					return new PVector(i, j);
-			i = 0;
+			for(; x<arrayDim; x++)
+				if(get(x, y)>0)
+					return new Vector(x, y);
+			x = 0;
 		}
-		return getNext(new PVector(-1, 0));
+		return getNext(new Vector(-1, 0));
 		// kan oneindig bij leeg bord
+	}
+	
+	public Vector getNextEmpty(Vector v)
+	{
+		int x = v.x+1;
+		for(int y = v.y; y<arrayDim; y++)
+		{
+			for(; x<arrayDim; x++)
+				if(get(x, y)==0)
+					return new Vector(x, y);
+			x = 0;
+		}
+		return null;
 	}
 	
 	public void set(int x, int y, int n)
@@ -108,14 +125,14 @@ public class Board
 		board[x][y] = n;
 	}
 	
-	public void set(PVector v, int n)
+	public void set(Vector v, int n)
 	{
-		set((int)v.x, (int)v.y, n);
+		set(v.x, v.y, n);
 	}
 	
 	public boolean isWin()
 	{
-		for(PVector goal : goals)
+		for(Vector goal : goals)
 			if(get(goal)!=1)
 				return false;
 		return true;
@@ -123,14 +140,7 @@ public class Board
 	
 	public Board copy()
 	{
-		Board b = new Board(this.gameType, this.arrayDim);
-		for(int i = 0; i<b.arrayDim; i++)
-			for(int j = 0; j<b.arrayDim; j++)
-				b.set(i, j, get(i, j));
-		b.goals = goals;
-		b.setDepth(depth);
-		b.parent = parent;
-		return b;
+		return new Board(this);
 	}
 	
 	public String[][] toStringArray()
@@ -140,7 +150,7 @@ public class Board
 			for(int x = 0; x<arrayDim; x++)
 			{
 				strArray[x][y] = Integer.toString(get(x, y));
-				for(PVector goal : goals)
+				for(Vector goal : goals)
 					if(goal.x==x && goal.y==y)
 						strArray[x][y] += "g";
 			}
@@ -152,7 +162,7 @@ public class Board
 		return arrayDim;
 	}
 	
-	public PVector[] getGoals()
+	public Vector[] getGoals()
 	{
 		return goals;
 	}
@@ -170,6 +180,26 @@ public class Board
 		return sb.toString();
 	}
 	
+	public int getDifficulty()
+	{
+		return difficulty;
+	}
+	
+	public int[][] getBoard()
+	{
+		return board;
+	}
+	
+	public GameType getGameType()
+	{
+		return gameType;
+	}
+	
+	public void setGoals(Vector[] goals)
+	{
+		this.goals = goals;
+	}
+	
 	public int getDepth()
 	{
 		return depth;
@@ -180,13 +210,8 @@ public class Board
 		this.depth = depth;
 	}
 	
-	public int getDifficulty()
+	protected void setBoard(int[][] board)
 	{
-		return difficulty;
-	}
-	
-	public int[][] getBoard()
-	{
-		return board;
+		this.board = board;
 	}
 }

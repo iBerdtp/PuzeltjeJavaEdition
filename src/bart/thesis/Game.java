@@ -1,6 +1,5 @@
 package bart.thesis;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import processing.core.PConstants;
 import processing.data.IntList;
@@ -15,7 +14,6 @@ public abstract class Game extends Section
 	private Board initial;
 	private Board current;
 	protected Vector selected;
-	private Move move;
 	private boolean won;
 	private Move[] allowed;
 	private int[] moveControls;
@@ -35,12 +33,12 @@ public abstract class Game extends Section
 		this.possibleDifs = new IntList();
 	}
 	
-	public Game(Section parentSection, GameType gameType, int arrayDim, int nrOfGoals, int nrOfPawns, int optimal)
+	public Game(Section parentSection, GameType gameType, int arrayDim, int nrOfGoals, int nrOfPawns, int chosenDif)
 	{
 		this(parentSection, gameType, arrayDim);
 		this.nrOfGoals = nrOfGoals;
 		this.nrOfPawns = nrOfPawns;
-		this.chosenDif = optimal;
+		this.chosenDif = chosenDif;
 		this.newGame = true;
 		setMap(moveControls, allowed);
 		setAdditional();
@@ -104,6 +102,9 @@ public abstract class Game extends Section
 	
 	private void createNewPuzzle()
 	{
+		Vector[] goals = {new Vector(arrayDim/2, arrayDim/2)};
+		
+//		initial = BackwardsGenerator.generate(gameType, arrayDim, goals, nrOfPawns, chosenDif);
 		initial = generate(arrayDim, nrOfGoals, nrOfPawns, chosenDif, allowed);
 		alreadySaved = false;
 		reset();
@@ -119,7 +120,6 @@ public abstract class Game extends Section
 	{
 		current = initial.copy();
 		won = false;
-		move = null;
 		for(int y = 0; y<current.getArrayDim(); y++)
 			for(int x = 0; x<current.getArrayDim(); x++)
 				if(current.get(x, y)==1)

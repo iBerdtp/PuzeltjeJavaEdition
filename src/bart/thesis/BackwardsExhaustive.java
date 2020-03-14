@@ -7,106 +7,76 @@ import java.util.LinkedList;
 public class BackwardsExhaustive
 {
 	private GameType gameType;
-	private int chosenDim;
 	private int arrayDim;
-	private int nrOfGoals;
-	private int nrOfPawns;
+	private int maxNrOfPawns;
+	private Vector[] goals;
 	private Move[] allowed;
-	private LinkedList<Board> frontier;
+	private LinkedList<BackwardsNode> frontier;
 	private ArrayList<int[][]> visited;
+	private int maxDif;
+	private ArrayList<int[][]> hardests;
 	
-	public BackwardsExhaustive(GameType gameType, int chosenDim, int nrOfGoals, int nrOfPawns)
+	public BackwardsExhaustive(GameType gameType, int chosenDim, Vector[] goals, int maxNrOfPawns)
 	{
 		this.gameType = gameType;
-		this.chosenDim = chosenDim;
 		this.arrayDim = gameType==GameType.HEX ? chosenDim*2-1 : chosenDim;
-		this.nrOfGoals = nrOfGoals;
-		this.nrOfPawns = nrOfPawns;
+		this.maxNrOfPawns = maxNrOfPawns;
+		this.goals = goals;
 		this.allowed = gameType.getAllowed();
-		this.frontier = new LinkedList<Board>();
+		this.frontier = new LinkedList<BackwardsNode>();
 		this.visited = new ArrayList<int[][]>();
+		this.maxDif = 0;
+		this.hardests = new ArrayList<int[][]>();
 	}
 	
-	//TODO inbouwen dat ie willekeurig stukjes invult als ie iets heeft gevonden
-	
-	public ArrayList<Board> getPuzzles()
+	public ArrayList<int[][]> getHardests()
 	{
-		Board root = createRoot(new Vector(arrayDim/2, arrayDim/2));
-		ArrayList<Board> leaves = new ArrayList<Board>();
-		frontier.add(root);
-		visited.add(root.getBoard());
-		
+		BackwardsNode root = new BackwardsNode(gameType, arrayDim, goals, maxNrOfPawns);
+		registerAll(root.completeBoard());
 		while(true)
 		{
 			if(frontier.isEmpty())
-				return leaves;
-			Board current = frontier.remove(0);
-			boolean deadEnd = true;
+				return hardests;
+			BackwardsNode current = frontier.remove(0);
 			for(int y = 0; y<current.getArrayDim(); y++)
 				for(int x = 0; x<current.getArrayDim(); x++)
 					if(current.get(x, y)>0)
 						for(Move move : allowed)
 						{
-							if(current.getDifficulty()==0 && move!=Move.UP || current.getDifficulty()==1 && move==Move.RIGHT)
-								continue;
-							Board copy = current.copy();
-							Vector o = new Vector(x+move.v.x, y+move.v.y);
-							if(copy.boundariesRespected(o))
-							{
-								if(copy.get(o)==0)
-									if(copy.getNrOfPawns()==nrOfPawns || copy.path[o.x][o.y])
-										continue;
-									else
-									{
-										copy.putPawn(o);
-										copy.path[o.x][o.y]=true;
-										copy.incrementPawnCount();
-									}
-								int type = copy.get(x, y);
-								copy.set(x, y, 0);
-								Vector reverse = new Vector(x, y);
-								while(copy.boundariesRespected(reverse.sub(move.v)) && copy.get(reverse)==0)
-								{
-									deadEnd = false;
-									copy.set(reverse, type);
-									int boardPos = Collections.binarySearch(visited, copy.getBoard(), Processing.COMPARATOR);
-									if(boardPos<0)
-									{
-										copy.path[reverse.x][reverse.y] = true;
-										Board copycopy = copy.copy();
-										copycopy.incrementDifficulty();
-										frontier.add(copycopy);
-										visited.add(-boardPos-1, copycopy.getBoard());
-									}
-									copy.set(reverse, 0);
-								}
-							}
+							ArrayList<BackwardsNode> parents = current.getPossibleParents(new Vector(x, y), move);
+							for(BackwardsNode parent : parents)
+								register(parent);
 						}
-			if(deadEnd)
-				if(nrOfPawns==current.getNrOfPawns())
-				{
-					BFS bfs = new BFS(current, allowed);
-					Board solution = bfs.solution();
-					if(solution==null)
-					{
-						System.out.println("geen solusie voor deze:\n"+current+"\n-----");
-						current.printPath();
-					}
-					if(solution!=null && solution.getDepth()==current.getDifficulty())
-						leaves.add(current);
-				}
 		}
 	}
 	
-	private Board createRoot(Vector... goals)
+	private void register(BackwardsNode node)
 	{
-		int[][] board = new int[arrayDim][arrayDim];
-		Board root = new Board(gameType, arrayDim, goals, board);
-		for(Vector goal : goals)
+		int boardPos = Collections.binarySearch(visited, node.getBoard(), Processing.COMPARATOR);
+		if(boardPos<0)
 		{
-			board[goal.x][goal.y] = 1;
-			root.path[goal.x][goal.y]= true; 
+			if(node.getNrOfPawns()==node.getMaxNrOfPawns())
+			{
+				if(node.getDepth()>maxDif)
+				{
+					maxDif = node.getDepth();
+					hardests = new ArrayList<int[][]>();
+				}
+				hardests.add(node.getBoard());
+			}
+			frontier.add(node);
+			visited.add(-boardPos-1, node.getBoard());
 		}
-		return root;
+	}
+	
+	private void registerAll(ArrayList<BackwardsNode> nodes)
+	{
+		for(BackwardsNode node : nodes)
+			register(node);
+	}
+	
+	public int getGod()
+	{
+		return maxDif;
 	}
 }

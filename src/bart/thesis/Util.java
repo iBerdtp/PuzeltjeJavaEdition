@@ -1,6 +1,7 @@
 package bart.thesis;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 import processing.core.PConstants;
 
@@ -8,9 +9,19 @@ public class Util
 {
 	private final static Random random = new Random();
 	
-	public static Vector getRandom(ArrayList<Vector> vectors)
+	public static <T> T removeRandom(ArrayList<T> list)
 	{
-		return vectors.remove(random.nextInt(vectors.size()));
+		return list.remove(random.nextInt(list.size()));
+	}
+	
+	public static <T> T getRandom(T[] array)
+	{
+		return array[random.nextInt(array.length)];
+	}
+	
+	public static int getRandomIntIncl(int lowIncl, int maxIncl)
+	{
+		return random.nextInt(maxIncl+1-lowIncl)+lowIncl;
 	}
 	
 	public static void resizeSquare(int arrayDim)
@@ -26,9 +37,39 @@ public class Util
 	public static boolean contains(int[] a, int i)
 	{
 		for(int e : a)
-			if(i==e)
+			if(e==i)
 				return true;
 		return false;
+	}
+	
+	public static <T> boolean contains(T[] a, T t)
+	{
+		for(T e : a)
+			if(e.equals(a))
+				return true;
+		return false;
+	}
+	
+	public static float max(float[] ints)
+	{
+		float max = ints[0];
+		for(int i=1; i<ints.length; i++)
+			if(ints[i]>max)
+				max = ints[i];
+		return max;
+	}
+	
+	public static ArrayList<Integer> sequence(int upperExcl)
+	{
+		return sequence(upperExcl, 0);
+	}
+	
+	public static ArrayList<Integer> sequence(int upperExcl, int n)
+	{
+		ArrayList<Integer> sequence = new ArrayList<Integer>(upperExcl);
+		for(int i=0; i<upperExcl; i++)
+			sequence.add(i+n);
+		return sequence;
 	}
 	
 	public static int[] toIntArray(String[] strings)
@@ -45,6 +86,16 @@ public class Util
 		for(int i = 0; i<ints.length; i++)
 			strings[i] = Integer.toString(ints[i]);
 		return strings;
+	}
+	
+	public static int[][] copy(int[][] original)
+	{
+		int dim = original.length;
+		int[][] copy = new int[dim][dim];
+		for(int y=0; y<dim; y++)
+			for(int x=0; x<dim; x++)
+				copy[x][y] = original[x][y];
+		return copy;
 	}
 	
 	public static void showBoard(GameType gameType, Board current, int borderSize)

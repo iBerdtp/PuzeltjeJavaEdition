@@ -32,7 +32,7 @@ public class Processing extends PApplet
 	
 	public void settings()
 	{
-		size(500, 500);
+		size(100, 100);
 	}
 	
 	public void setup()

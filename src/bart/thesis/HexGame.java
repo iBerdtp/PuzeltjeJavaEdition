@@ -62,7 +62,7 @@ public class HexGame extends Game
 		ArrayList<Vector> possibleGoals = getPossibleSpots(b, 1);
 		Vector[] goals = new Vector[nrOfGoals];
 		for(int i = 0; i<nrOfGoals; i++)
-			goals[i] = Util.getRandom(possibleGoals);
+			goals[i] = Util.removeRandom(possibleGoals);
 		b.setGoals(goals);
 	}
 	
@@ -71,7 +71,7 @@ public class HexGame extends Game
 		ArrayList<Vector> spots = getPossibleSpots(b, 0);
 		Vector[] goals = b.getGoals();
 		for(int i = 0; i<nrOfPawns; i++)
-			b.set(Util.getRandom(spots), 2);
+			b.set(Util.removeRandom(spots), 2);
 		for(int i = 0; i<spots.size(); i++)
 			for(int j = 0; j<goals.length; j++)
 				if(spots.get(i).equals(goals[j]))
@@ -80,7 +80,7 @@ public class HexGame extends Game
 					break;
 				}
 		for(int i = 0; i<nrOfGoals; i++)
-			b.set(Util.getRandom(spots), 1);
+			b.set(Util.removeRandom(spots), 1);
 	}
 	
 	private ArrayList<Vector> getPossibleSpots(Board b, int rimSize)
