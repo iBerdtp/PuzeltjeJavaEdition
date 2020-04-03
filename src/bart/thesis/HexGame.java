@@ -42,19 +42,9 @@ public class HexGame extends Game
 	
 	protected void fillAccordingly(Board b, int nrOfGoals, int nrOfPawns)
 	{
-		setBoundaries(b);
+//		Util.setHexBoundaries(b);
 		setGoals(b, nrOfGoals);
 		setUnits(b, nrOfGoals, nrOfPawns);
-	}
-	
-	private void setBoundaries(Board b)
-	{
-		for(int y = 0; y<chosenDim-1; y++)
-			for(int x = 0; x<chosenDim-1-y; x++)
-			{
-				b.getBoard()[y][x] = -1;
-				b.getBoard()[b.getArrayDim()-1-y][b.getArrayDim()-1-x] = -1;
-			}
 	}
 	
 	private void setGoals(Board b, int nrOfGoals)

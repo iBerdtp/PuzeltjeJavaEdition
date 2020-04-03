@@ -2,26 +2,20 @@ package bart.thesis;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.TreeMap;
 
-public class BFS
+public class SmartBFS
 {
-	private Move[] allowed;
-	private ArrayList<Board> frontier;
-	private ArrayList<int[][]> visited;
-	
-	public BFS(Board board, Move[] allowed)
+	public static Board getHardestGoalsSolution(Board board, Move[] allowed)
 	{
-		this.allowed = allowed;
-		this.frontier = new ArrayList<Board>();
+		ArrayList<Board> frontier = new ArrayList<Board>();
 		frontier.add(board);
-		this.visited = new ArrayList<int[][]>();
+		ArrayList<int[][]> visited = new ArrayList<int[][]>();
 		visited.add(board.getBoard());
-	}
-	
-	public Board solution()
-	{
-		if(frontier.get(0).isWin())
-			return frontier.get(0);
+		TreeMap<int[][], Integer> goalsOptions = new TreeMap<int[][], Integer>(Processing.GOAL_COMPARATOR);
+		goalsOptions.put(board.getBoard(), 0);
+		Board hardestGoals = board;
+		
 		while(!frontier.isEmpty())
 		{
 			Board current = frontier.remove(0);
@@ -35,13 +29,18 @@ public class BFS
 							int boardPos = Collections.binarySearch(visited, copy.getBoard(), Processing.COMPARATOR);
 							if(boardPos<0)
 							{
-								if(copy.isWin())
-									return copy;
+								int[][] grid = copy.getBoard();
+								if(goalsOptions.get(grid) == null)
+								{
+									hardestGoals = copy;
+									goalsOptions.put(grid, copy.getDepth());
+								}
 								frontier.add(copy);
 								visited.add(-boardPos-1, copy.getBoard());
 							}
 						}
 		}
-		return null;
+		hardestGoals.setGoalsToCurrent();
+		return hardestGoals;
 	}
 }

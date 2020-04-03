@@ -46,4 +46,12 @@ public enum GameType
 				return gt;
 		return null;
 	}
+	
+	public int[][] getEmpty(int arrayDim)
+	{
+		int[][] empty = new int[arrayDim][arrayDim];
+		if(this==HEX)
+			Util.setHexBoundaries(empty);
+		return empty;
+	}
 }

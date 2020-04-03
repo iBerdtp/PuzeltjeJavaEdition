@@ -19,6 +19,18 @@ public class Util
 		return array[random.nextInt(array.length)];
 	}
 	
+	public static <T> T sample(ArrayList<T> list, float[] p)
+	{
+		float r = random.nextFloat();
+		for(int i=0; i<p.length; i++)
+		{
+			if(r<p[i])
+				return list.get(i);
+			r-=p[i];
+		}
+		return null;
+	}
+	
 	public static int getRandomIntIncl(int lowIncl, int maxIncl)
 	{
 		return random.nextInt(maxIncl+1-lowIncl)+lowIncl;
@@ -96,6 +108,17 @@ public class Util
 			for(int x=0; x<dim; x++)
 				copy[x][y] = original[x][y];
 		return copy;
+	}
+	
+	public static void setHexBoundaries(int[][] b)
+	{
+		int arrayDim = b.length;
+		for(int y = 0; y<arrayDim/2; y++)
+			for(int x = 0; x<arrayDim/2-y; x++)
+			{
+				b[x][y] = -1;
+				b[arrayDim-1-x][arrayDim-1-y] = -1;
+			}
 	}
 	
 	public static void showBoard(GameType gameType, Board current, int borderSize)

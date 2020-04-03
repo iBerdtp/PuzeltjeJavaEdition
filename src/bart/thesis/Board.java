@@ -13,7 +13,7 @@ public class Board
 	{
 		this.gameType = gameType;
 		this.arrayDim = arrayDim;
-		this.board = new int[arrayDim][arrayDim];
+		this.board = gameType.getEmpty(arrayDim);
 	}
 	
 	public Board(GameType gameType, int arrayDim, Vector[] goals, Vector[] pawns, Vector[] blues)
@@ -198,6 +198,16 @@ public class Board
 	public void setGoals(Vector[] goals)
 	{
 		this.goals = goals;
+	}
+	
+	public void setGoalsToCurrent()
+	{
+		goals = new Vector[goals.length];
+		int i=0;
+		for(int y=0; y<arrayDim; y++)
+			for(int x=0; x<arrayDim; x++)
+				if(get(x, y) == 1)
+					goals[i++] = new Vector(x, y);
 	}
 	
 	public int getDepth()

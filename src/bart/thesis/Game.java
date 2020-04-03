@@ -102,10 +102,7 @@ public abstract class Game extends Section
 	
 	private void createNewPuzzle()
 	{
-		Vector[] goals = {new Vector(arrayDim/2, arrayDim/2)};
-		
-//		initial = BackwardsGenerator.generate(gameType, arrayDim, goals, nrOfPawns, chosenDif);
-		initial = generate(arrayDim, nrOfGoals, nrOfPawns, chosenDif, allowed);
+		initial = generate(arrayDim, nrOfGoals, nrOfPawns, chosenDif, allowed);	
 		alreadySaved = false;
 		reset();
 	}
@@ -156,40 +153,36 @@ public abstract class Game extends Section
 		while(true)
 		{
 			tried++;
-			if(tried==checkLimit)
-				System.out.println("tried "+checkLimit+" in "+(Main.PROCESSING.millis()-t0)/1000f+"s");
-			Board board = randomBoard(arrayDim, nrOfGoals, nrOfPawns);
-			BFS bfs = new BFS(board, allowed);
-			Board solution = bfs.solution();
-			if(solution!=null && !possibleDifs.hasValue(solution.getDepth()))
+			if(tried == checkLimit)
+				System.out.println("tried "+tried+" in "+(Main.PROCESSING.millis()-t0)/1000f+"s");
+			Board board = SmartGenerator.generatePuzzle(gameType, arrayDim, nrOfGoals, nrOfPawns, new float[] {16/25f,8/25f,1/25f});
+			if(!possibleDifs.hasValue(board.getDifficulty()))
 			{
-				possibleDifs.append(solution.getDepth());
+				possibleDifs.append(board.getDifficulty());
 				possibleDifs.sort();
 				System.out.println("possible difs: "+possibleDifs);
 			}
-			if(solution!=null && solution.getDepth()>=optimal)
+			if(board.getDifficulty()>=optimal)
 			{
 				System.out.println("tried: "+tried);
-				System.out.println("solvable in: "+solution.getDepth());
-				board.setDepth(0);
-				board.setDifficulty(solution.getDepth());
+				System.out.println("solvable in: "+board.getDifficulty());
 				return board;
 			}
 		}
 	}
 	
-	private Board randomBoard(int dim, int nrOfGoals, int nrOfPawns)
-	{
-		Board b = new Board(gameType, dim);
-		fillAccordingly(b, nrOfGoals, nrOfPawns);
-		return b;
-	}
-	
-	private void printLooking()
-	{
-		Main.PROCESSING.textAlign(PConstants.CENTER, PConstants.CENTER);
-		Main.PROCESSING.text("Looking for match...\nFound puzzles in range:\n[", Main.PROCESSING.width/2, Main.PROCESSING.height/2);
-	}
+//	private Board randomBoard(int dim, int nrOfGoals, int nrOfPawns)
+//	{
+//		Board b = new Board(gameType, dim);
+//		fillAccordingly(b, nrOfGoals, nrOfPawns);
+//		return b;
+//	}
+//	
+//	private void printLooking()
+//	{
+//		Main.PROCESSING.textAlign(PConstants.CENTER, PConstants.CENTER);
+//		Main.PROCESSING.text("Looking for match...\nFound puzzles in range:\n[", Main.PROCESSING.width/2, Main.PROCESSING.height/2);
+//	}
 	
 	protected abstract void setAdditional();
 	protected abstract void fillAccordingly(Board b, int nrOfGoals, int nrOfPawns);

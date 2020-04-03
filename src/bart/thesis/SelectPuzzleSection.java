@@ -18,9 +18,9 @@ public class SelectPuzzleSection extends Section
 		this.puzzlesPath = puzzlesDir.getPath();
 		this.list = puzzlesDir.list();
 		this.currentIndex = 0;
+		this.gameType = gameType;
 		this.currentOption = loadPuzzle(list[currentIndex]);
 		this.borderSize = 50;
-		this.gameType = gameType;
 		resize();
 	}
 	

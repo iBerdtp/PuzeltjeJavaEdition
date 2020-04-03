@@ -16,10 +16,10 @@ public class Main
 	
 	public static void main(String[] args)
 	{
-//		String[] processingArgs = {"MySketch"};
-//		PApplet.runSketch(processingArgs, PROCESSING);
+		String[] processingArgs = {"MySketch"};
+		PApplet.runSketch(processingArgs, PROCESSING);
 		
-		doeHet();
+//		doeHet();
 	}
 	
 	public static void doeHet()

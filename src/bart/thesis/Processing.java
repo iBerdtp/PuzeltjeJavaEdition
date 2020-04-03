@@ -29,6 +29,21 @@ public class Processing extends PApplet
 			return 0;
 		}
 	};
+	final static Comparator<int[][]> GOAL_COMPARATOR = new Comparator<int[][]>()
+	{
+		// assumes same dimensions
+		@Override
+		public int compare(int[][] a, int[][] b)
+		{
+			for(int y = 0; y<a.length; y++)
+				for(int x = 0; x<a[y].length; x++)
+					if(a[x][y]==1&&b[x][y]!=1)
+						return 1;
+					else if(b[x][y]==1&&a[x][y]!=1)
+						return -1;
+			return 0;
+		}
+	};
 	
 	public void settings()
 	{
