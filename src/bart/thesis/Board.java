@@ -8,12 +8,14 @@ public class Board
 	public Vector[] goals;
 	private int difficulty;
 	protected int depth;
+	private Board solution;
 	
 	public Board(GameType gameType, int arrayDim)
 	{
 		this.gameType = gameType;
 		this.arrayDim = arrayDim;
 		this.board = gameType.getEmpty(arrayDim);
+		this.goals = new Vector[0];
 	}
 	
 	public Board(GameType gameType, int arrayDim, Vector[] goals, Vector[] pawns, Vector[] blues)
@@ -138,6 +140,40 @@ public class Board
 		return true;
 	}
 	
+	public boolean isValid()
+	{
+		for(Vector goal : goals)
+			if(goal==null)
+				return false;
+		return true;
+	}
+	
+	public boolean isGoal(int x, int y)
+	{
+		for(Vector goal : goals)
+			if(x==goal.x && y==goal.y)
+				return true;
+		return false;
+	}
+	
+	public void extendGoals(int x, int y)
+	{
+		Vector[] backup = goals.clone();
+		goals = new Vector[goals.length+1];
+		for(int i=0; i<backup.length; i++)
+			goals[i] = backup[i];
+		goals[goals.length-1] = new Vector(x, y);
+	}
+	
+	public void removeGoal(int x, int y)
+	{
+		Vector[] backup = goals.clone();
+		goals = new Vector[goals.length-1];
+		for(int i=0, j=0; i<backup.length; i++)
+			if(backup[i].x != x || backup[i].y != y)
+				goals[j++] = backup[i];
+	}
+	
 	public Board copy()
 	{
 		return new Board(this);
@@ -200,9 +236,12 @@ public class Board
 		this.goals = goals;
 	}
 	
-	public void setGoalsToCurrent()
+	public void setGoalsToCurrent(boolean correctAmount)
 	{
-		goals = new Vector[goals.length];
+		if(correctAmount)
+			goals = new Vector[goals.length];
+		else
+			goals = new Vector[getNrOfGoals()];
 		int i=0;
 		for(int y=0; y<arrayDim; y++)
 			for(int x=0; x<arrayDim; x++)
@@ -223,5 +262,25 @@ public class Board
 	protected void setBoard(int[][] board)
 	{
 		this.board = board;
+	}
+	
+	public void setSolution(Board solution)
+	{
+		this.solution = solution;
+	}
+	
+	public Board getSolution()
+	{
+		return solution;
+	}
+	
+	private int getNrOfGoals()
+	{
+		int nrOfGoals = 0;
+		for(int y=0; y<arrayDim; y++)
+			for(int x=0; x<arrayDim; x++)
+				if(get(x, y) == 1)
+					nrOfGoals++;
+		return nrOfGoals;
 	}
 }

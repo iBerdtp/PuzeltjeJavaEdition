@@ -24,7 +24,7 @@ public abstract class TextSection extends Section
 	
 	public void resize()
 	{
-		Main.PROCESSING.setSurfaceSize(600, Math.max(4, (questions.length+2))*textSize);
+		Main.PROCESSING.setSurfaceSize(650, Math.max(4, (questions.length+2))*textSize);
 	}
 	
 	public void handleInput()
@@ -34,20 +34,17 @@ public abstract class TextSection extends Section
 			answers[index++] = Integer.parseInt(text);
 			text = "";
 		}
-		else
+		for(int i = 48; i<58; i++)
+			if(Main.PROCESSING.KEYS[i])
+				text += i-48;
+		if(Main.PROCESSING.KEYS[PConstants.BACKSPACE])
 		{
-			for(int i = 48; i<58; i++)
-				if(Main.PROCESSING.KEYS[i])
-					text += i-48;
-			if(Main.PROCESSING.KEYS[PConstants.BACKSPACE])
-			{
-				if(!text.equals(""))
-					text = "";
-				else if(index>0)
-					index--;
-				else if(parentSection!=null)
-					backToParent();
-			}
+			if(!text.equals(""))
+				text = "";
+			else if(index>0)
+				index--;
+			else if(parentSection!=null)
+				backToParent();
 		}
 	}
 	

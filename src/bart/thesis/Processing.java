@@ -14,6 +14,7 @@ public class Processing extends PApplet
 	final static float ELLIPSE_FACTOR = 0.8f;
 	final static int REG_SQUARE_SIZE = 100;
 	final static int TEXT_BACKGROUND = 75;
+	final static int BORDER_SIZE = 50;
 	final static Comparator<int[][]> COMPARATOR = new Comparator<int[][]>()
 	{
 		// assumes same dimensions
@@ -63,11 +64,17 @@ public class Processing extends PApplet
 	
 	public void keyPressed()
 	{
-		KEYS[keyCode] = true;
-		if(keyCode=='R')
-			setup();
 		if(keyCode==ESC)
 			System.exit(0);
+		if(keyCode=='R')
+			setup();
+		else
+			KEYS[keyCode] = true;
+	}
+	
+	public void mousePressed()
+	{
+		KEYS[256] = true;
 	}
 	
 	public void setSection(Section section)
@@ -82,7 +89,7 @@ public class Processing extends PApplet
 	
 	public void resetKeys()
 	{
-		this.KEYS = new boolean[255];
+		this.KEYS = new boolean[257];
 	}
 	
 	public void savePuzzle(Board initial, GameType gameType)

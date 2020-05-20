@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 public class SmartGenerator
 {
-	private Board board;
-	
 	public Board generate(int minDif)
 	{
 		return null;
@@ -14,9 +12,10 @@ public class SmartGenerator
 	public static Board generatePuzzle(GameType gameType, int arrayDim, int nrOfGoals, int nrOfPawns, float[] p)
 	{
 		Board begin = generateSmartBegin(gameType, arrayDim, nrOfGoals, nrOfPawns, p);
-		Board solution = SmartBFS.getHardestGoalsSolution(begin, gameType.getAllowed());
+		Board solution = SmartBFS.getHardestGoalsSolution(begin, gameType.getAllowed(), true);
 		begin.setGoals(solution.getGoals());
 		begin.setDifficulty(solution.getDepth());
+		begin.setSolution(solution);
 		return begin;
 	}
 	

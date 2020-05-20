@@ -62,6 +62,15 @@ public class Util
 		return false;
 	}
 	
+	public static int max(ArrayList<Integer> ints)
+	{
+		int max = ints.get(0);
+		for(int i=1; i<ints.size(); i++)
+			if(ints.get(i)>max)
+				max = ints.get(i);
+		return max;
+	}
+	
 	public static float max(float[] ints)
 	{
 		float max = ints[0];
@@ -138,16 +147,16 @@ public class Util
 		for(int i = 0; i<arrayDim; i++)
 			for(int j = 0; j<arrayDim; j++)
 			{
-				Main.PROCESSING.fill(0);
+				int sat = 0;
 				for(Vector goal : current.getGoals())
 					if(goal.x==i && goal.y==j)
-						Main.PROCESSING.fill(255, 0, 0);
+						sat = 255;
 				Main.PROCESSING.stroke(Processing.TEXT_BACKGROUND);
-				Main.PROCESSING.rect(borderSize+i*squareSize, borderSize+j*squareSize, squareSize, squareSize);
+				showField(sat, borderSize, squareSize, i, j);
 				if(current.get(i, j)==1)
-					drawPionnetje(0, 0, 255, borderSize, squareSize, i, j);
+					showPawn(0, 0, 255, borderSize, squareSize, i, j);
 				else if(current.get(i, j)>1)
-					drawPionnetje(0, 255, 0, borderSize, squareSize, i, j);
+					showPawn(0, 255, 0, borderSize, squareSize, i, j);
 			}
 	}
 	
@@ -184,10 +193,16 @@ public class Util
 			}
 	}
 	
-	private static void drawPionnetje(int r, int g, int b, int borderSize, int squareSize, int i, int j)
+	public static void showPawn(int r, int g, int b, int borderSize, int squareSize, int i, int j)
 	{
 		Main.PROCESSING.noStroke();
 		Main.PROCESSING.fill(r, g, b);
 		Main.PROCESSING.ellipse(borderSize+i*squareSize, borderSize+j*squareSize, squareSize, squareSize);
+	}
+	
+	public static void showField(int sat, int borderSize, int squareSize, int i, int j)
+	{
+		Main.PROCESSING.fill(sat, 0, 0);
+		Main.PROCESSING.rect(borderSize+i*squareSize, borderSize+j*squareSize, squareSize, squareSize);
 	}
 }

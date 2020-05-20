@@ -8,6 +8,7 @@ public class BackwardsNode extends Board
 	private int nrOfPawns;
 	private ArrayList<int[][]> visited;
 	private int maxNrOfPawns;
+	private Board solved;
 	
 	public BackwardsNode(GameType gameType, int arrayDim, Vector[] goals, int maxNrOfPawns)
 	{
@@ -23,6 +24,7 @@ public class BackwardsNode extends Board
 		super(node);
 		this.maxNrOfPawns = node.maxNrOfPawns;
 		this.nrOfPawns = node.nrOfPawns;
+		this.solved = node.solved;
 	}
 	
 	public ArrayList<BackwardsNode> getPossibleParents(Vector v, Move move)
@@ -32,7 +34,6 @@ public class BackwardsNode extends Board
 		Vector reverse = v.copy().sub(move.v);
 		if(!boundariesRespected(obstacleSpot) || !boundariesRespected(reverse) || get(reverse)>0 || get(obstacleSpot)==0)
 			return parents;
-		
 		BackwardsNode copy = copy();
 		copy.depth++;
 		return copy.getPossibleParents(v, move, get(v), new ArrayList<BackwardsNode>());
@@ -119,7 +120,10 @@ public class BackwardsNode extends Board
 	private ArrayList<BackwardsNode> completeBoard(ArrayList<BackwardsNode> nodes, Vector location)
 	{
 		if(maxNrOfPawns==nrOfPawns)
+		{
+			solved = this;
 			nodes.add(this);
+		}
 		while(maxNrOfPawns>nrOfPawns && (location = getNextEmpty(location))!=null)
 		{
 			BackwardsNode copy = copy();
@@ -132,6 +136,11 @@ public class BackwardsNode extends Board
 	public int getMaxNrOfPawns()
 	{
 		return maxNrOfPawns;
+	}
+	
+	public Board getSolved()
+	{
+		return solved;
 	}
 	
 	@Override

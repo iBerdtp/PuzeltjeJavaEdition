@@ -9,7 +9,6 @@ public class SelectPuzzleSection extends Section
 	private String[] list;
 	private int currentIndex;
 	private Board currentOption;
-	private int borderSize;
 	private GameType gameType;
 	
 	public SelectPuzzleSection(Section parentSection, File puzzlesDir, GameType gameType)
@@ -20,7 +19,6 @@ public class SelectPuzzleSection extends Section
 		this.currentIndex = 0;
 		this.gameType = gameType;
 		this.currentOption = loadPuzzle(list[currentIndex]);
-		this.borderSize = 50;
 		resize();
 	}
 	
@@ -47,7 +45,7 @@ public class SelectPuzzleSection extends Section
 	public void iterate()
 	{
 		Main.PROCESSING.background(Processing.TEXT_BACKGROUND);
-		Util.showBoard(gameType, currentOption, borderSize);
+		Util.showBoard(gameType, currentOption, Processing.BORDER_SIZE);
 	}
 	
 	private Board loadPuzzle(String puz)

@@ -98,6 +98,12 @@ public abstract class Game extends Section
 			Main.PROCESSING.savePuzzle(initial, gameType);
 			alreadySaved = true;
 		}
+		
+		if(Main.PROCESSING.KEYS['F'])
+		{
+			System.out.println("Frame saved");
+			Main.PROCESSING.saveFrame("####.jpg");
+		}
 	}
 	
 	private void createNewPuzzle()

@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 public class SmartBFS
 {
-	public static Board getHardestGoalsSolution(Board board, Move[] allowed)
+	public static Board getHardestGoalsSolution(Board board, Move[] allowed, boolean correctAmount)
 	{
 		ArrayList<Board> frontier = new ArrayList<Board>();
 		frontier.add(board);
@@ -40,7 +40,7 @@ public class SmartBFS
 							}
 						}
 		}
-		hardestGoals.setGoalsToCurrent();
+		hardestGoals.setGoalsToCurrent(correctAmount);
 		return hardestGoals;
 	}
 }
